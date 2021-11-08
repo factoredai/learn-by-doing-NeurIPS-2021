@@ -137,12 +137,12 @@ if __name__ == "__main__":
     with open(systems_path, "r") as f:
         systems_list = [i.strip() for i in f.readlines()]
 
-    for system_idx, system_name in enumerate(systems_list):
+    for system_name in systems_list:
         if system_name.endswith("bumblebee"):
             continue
         data = {}
         for file in glob.glob(
-            f"./training_trajectories/{systems_list[system_idx]}_*.csv"
+            f"./training_trajectories/{system_name}_*.csv"
         ):
             data[file[-6:-4]] = pd.read_csv(file)
 
@@ -192,10 +192,10 @@ if __name__ == "__main__":
         y_train_pred = model.predict(X_train)
 
         model_save_path = (
-            f"../models/model_scikitquadratic_clipping_{systems_list[system_idx]}"
+            f"../models/model_scikitquadratic_clipping_{system_name}"
         )
         r_save_path = (
-            f"../models/model_scikitquadratic_clipping_R_{systems_list[system_idx]}"
+            f"../models/model_scikitquadratic_clipping_R_{system_name}"
         )
 
         with open(model_save_path, "wb") as f:
@@ -205,6 +205,6 @@ if __name__ == "__main__":
             pickle.dump(Rinv, f)
 
         print(
-            f"MAE for system {systems_list[system_idx]} is :",
+            f"MAE for system {system_name} is :",
             np.mean(np.abs(y_test_pred.flatten() - y_test.flatten())),
         )
