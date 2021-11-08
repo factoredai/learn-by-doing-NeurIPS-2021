@@ -52,7 +52,7 @@ class controller(object):
 
         elif system.endswith("bumblebee"):
             self.all_controllers_params = joblib.load(
-                "linear_controllers_params.joblib"
+                "../models/linear_controllers_params_bumblebee.joblib"
             )
             self.controller_params = self.all_controllers_params[self.system]
             self.n_states = self.controller_params["n_states"]
@@ -110,10 +110,7 @@ class controller(object):
                     transformed_u = self.Binv @ (
                         target - self.A[:2] @ state - self.d[:2]
                     )
-                    if self.system.endswith("bumblebee"):
-                        transformed_u = np.clip(transformed_u, -1, 1)
-                    else:
-                        transformed_u = np.clip(transformed_u, -0.7, 0.7)
+                    transformed_u = np.clip(transformed_u, -1, 1)
                     u = self.R @ self.scaler.inverse_transform([transformed_u])[0]
                     return u
             except TimeoutException:
