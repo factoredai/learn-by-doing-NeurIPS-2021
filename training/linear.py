@@ -122,7 +122,7 @@ def train_linear_controllers_for_bumblebees(mode: str) -> None:
     """
     # Specify the training data path and where the controller data will be
     # stored:
-    training_data = Path(__file__).parent / 'training_trajectories'
+    training_data = Path('training_trajectories')
     controller_data = Path('models')
 
     # Read system names:
