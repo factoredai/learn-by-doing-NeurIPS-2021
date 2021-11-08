@@ -136,7 +136,6 @@ if __name__ == "__main__":
 
     with open(systems_path, "r") as f:
         systems_list = [i.strip() for i in f.readlines()]
-    systems_list
 
     for system_idx in range(len(systems_list)):
         data = {}
