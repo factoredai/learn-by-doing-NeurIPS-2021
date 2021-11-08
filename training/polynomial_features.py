@@ -156,7 +156,8 @@ if __name__ == "__main__":
             n_inputs += 2
         n_outputs = len(control_input_columns)
 
-        # Splitting the dicts
+        # Splitting the dicts into train-val sets.
+        # Use all data (do not split) to train models used for submission.
         train_dict, validation_dict, validation_keys = sample_keys_train_val(data)
         X_train, y_train = convert_dict_to_np_dataset(
             train_dict, include_delta=INCLUDE_DELTA
