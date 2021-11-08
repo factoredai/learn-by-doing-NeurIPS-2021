@@ -3,15 +3,28 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
 
-def train_linear_controller(system: str, training_data: Path) -> dict:
+def train_linear_controller(
+    system: str,
+    training_data: Path,
+    mode: str = 'submission'
+) -> dict:
     """
     Trains a linear controller for the given `system` using the data stored in
     the `training_data` path employing the system model / controller approach
     and returns the controller parameters in a dictionary.
+
+    The `mode` parameter may be "testing" or "submission" and controls whether
+    a test split is used and test performances reported.
     """
+    # Verify that the `mode` argument is valid:
+    assert mode in ('testing', 'submission'), (
+        'mode can only be "testing" or "submission"'
+    )
+
     # Initialize and fill a list that stores one dataframe for each trajectory:
     dataframes = []
     for file in training_data.glob(f'{system}_*.csv'):
@@ -43,9 +56,18 @@ def train_linear_controller(system: str, training_data: Path) -> dict:
     # Concatenate all the dataframes together:
     df = pd.concat(dataframes, axis=0, ignore_index=True)
 
-    # Define the training set:
-    X_train = df.loc[:, state_vars + input_vars + ['bias']]
-    Y_train = df.loc[:, [f'new_{var}' for var in state_vars]]
+    if mode == 'testing':
+        # Define the training and test sets:
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            df.loc[:, state_vars + input_vars + ['bias']],
+            df.loc[:, [f'new_{var}' for var in state_vars]],
+            test_size=0.2,
+            random_state=42,
+        )
+    elif mode == 'submission':
+        # Use all data (do not split) to train models used for submission:
+        X_train = df.loc[:, state_vars + input_vars + ['bias']]
+        Y_train = df.loc[:, [f'new_{var}' for var in state_vars]]
 
     # Get the rotation matrix and its inverse for the input transformation:
     R, _, Rinv = np.linalg.svd(X_train[input_vars].cov().to_numpy())
@@ -62,10 +84,10 @@ def train_linear_controller(system: str, training_data: Path) -> dict:
     M = np.linalg.lstsq(
         X_train.to_numpy(), Y_train.to_numpy(), rcond=None)[0]
 
-    # Training MAE:
-    mae = np.mean(np.abs(X_train.to_numpy() @ M - Y_train.to_numpy()))
-
-    print(f'Training MAE for {system} system: {mae}\n')
+    if mode == 'testing':
+        # Report test MAE:
+        mae = np.mean(np.abs(X_test.to_numpy() @ M - Y_test.to_numpy()))
+        print(f'Test MAE for {system} system: {mae}\n')
 
     # System matrix in usual Control Theory notation such that the system
     # can be expressed as x(k + 1) = A x(k) + B u(k) + d:
@@ -89,11 +111,14 @@ def train_linear_controller(system: str, training_data: Path) -> dict:
     }
 
 
-def train_linear_controllers_for_bumblebees() -> None:
+def train_linear_controllers_for_bumblebees(mode: str) -> None:
     """
     Trains the linear controllers for the bumblebee systems following the
     system model / controller approach and saves the controllers' parameters to
     a file.
+
+    The `mode` parameter may be "testing" or "submission" and controls whether
+    a test split is used and test performances reported.
     """
     # Specify the training data path and where the controller data will be
     # stored:
@@ -106,7 +131,7 @@ def train_linear_controllers_for_bumblebees() -> None:
 
     # Create a dictionary with information about the controllers:
     controllers_params = {
-        system: train_linear_controller(system, training_data)
+        system: train_linear_controller(system, training_data, mode)
         for system in systems if system.endswith('bumblebee')
     }
 
@@ -114,8 +139,9 @@ def train_linear_controllers_for_bumblebees() -> None:
     joblib.dump(
         controllers_params,
         controller_data / 'linear_controllers_params_bumblebee.joblib'
-        )
+    )
 
 
 if __name__ == '__main__':
-    train_linear_controllers_for_bumblebees()
+    MODE = 'submission'
+    train_linear_controllers_for_bumblebees(MODE)
