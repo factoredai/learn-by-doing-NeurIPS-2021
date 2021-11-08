@@ -192,10 +192,10 @@ if __name__ == "__main__":
         y_train_pred = model.predict(X_train)
 
         model_save_path = (
-            f"../models/model_scikitquadratic_clipping_{system_name}"
+            f"./models/model_scikitquadratic_clipping_{system_name}"
         )
         r_save_path = (
-            f"../models/model_scikitquadratic_clipping_R_{system_name}"
+            f"./models/model_scikitquadratic_clipping_R_{system_name}"
         )
 
         with open(model_save_path, "wb") as f:
