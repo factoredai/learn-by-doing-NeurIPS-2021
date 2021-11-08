@@ -20,3 +20,7 @@ We trained a linear system model that predicted the next state given the current
 
 
 ## How to train the models
+
+The models should be trained from the root directory using one of the scripts on the `training` directory. The bumblebee systems are trained using the linear.py script and other systems using the polynomial_features.py.
+
+The training data should be on the `training_trajectories` and create a `models` directory. The `models` will be used for the training scripts to save the models.
