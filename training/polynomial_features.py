@@ -4,7 +4,6 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 from sklearn.compose import TransformedTargetRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
