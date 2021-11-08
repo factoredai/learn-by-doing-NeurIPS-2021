@@ -137,7 +137,9 @@ if __name__ == "__main__":
     with open(systems_path, "r") as f:
         systems_list = [i.strip() for i in f.readlines()]
 
-    for system_idx in range(len(systems_list)):
+    for system_idx, system_name in enumerate(systems_list):
+        if system_name.endswith("bumblebee"):
+            continue
         data = {}
         for file in glob.glob(
             f"./training_trajectories/{systems_list[system_idx]}_*.csv"
