@@ -12,6 +12,7 @@ from sklearn.preprocessing import MinMaxScaler, PolynomialFeatures, StandardScal
 
 DictDataset = Dict[str, pd.DataFrame]
 
+
 def get_state_columns(df: pd.DataFrame) -> List[str]:
     """Get names of columns related to the state of the system.
 
@@ -129,35 +130,6 @@ def convert_dict_to_np_dataset(
     X_arr = np.concatenate(X, axis=0)
     y_arr = np.concatenate(y, axis=0)
     return X_arr, y_arr
-
-
-def get_model(n_inputs: int, n_outputs: int) -> tf.keras.Sequential:
-    """Create and compile Keras model
-
-    Parameters
-    ----------
-    n_inputs : int
-        Neural network's input size.
-    n_outputs : int
-        Neural network's output size.
-
-    Returns
-    -------
-    tf.keras.Sequential
-        Compiled Keras model.
-    """
-    model = tf.keras.Sequential()
-    model.add(tf.keras.layers.InputLayer((n_inputs)))
-    model.add(tf.keras.layers.Dense(n_inputs * 10, activation="relu"))
-    model.add(tf.keras.layers.Dense(n_inputs * 5, activation="relu"))
-    model.add(tf.keras.layers.Dense(n_outputs, activation="linear"))
-
-    model.compile(
-        loss="MAE",
-        optimizer="adam",
-        metrics=["mse", "mae", tf.keras.metrics.RootMeanSquaredError()],
-    )
-    return model
 
 
 if __name__ == "__main__":
