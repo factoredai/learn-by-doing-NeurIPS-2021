@@ -1,5 +1,7 @@
 # Learn by Doing - NeurIPS 2021 Competition (ROBO Track)
 
+[![DOI](https://zenodo.org/badge/425888355.svg)](https://zenodo.org/badge/latestdoi/425888355)
+
 This repo contains the code for our submission of the [learn by doing](https://learningbydoingcompetition.github.io/) ROBO track. 
 
 ## Folder structure
